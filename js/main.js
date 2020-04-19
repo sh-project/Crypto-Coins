@@ -1,18 +1,18 @@
+/////////////////// document ready scripts ///////////////////
+//nav scripts and load coins
 $(document).ready(function () {
 
     // get the home-page content (from index_page.js)
-    $('#index-content').html(index_content());
+    $('#index-content').html(indexContent());
     $('#home-nav').addClass('active')
     // get all coins
-    get_Coins("https://api.coingecko.com/api/v3/coins/list");
+    getCoins("https://api.coingecko.com/api/v3/coins/list");
 
     // Rotating Text - Morphtext
     $("#js-rotating").Morphext({
         animation: "fadeIn",
         separator: ",",
-        speed: 2000,
-        complete: function () {
-        }
+        speed: 2000
     });
 
     //Prevent href=“#” Going to Top of Page
@@ -35,30 +35,30 @@ $(document).ready(function () {
         $('#livereports-nav').removeClass('active')
         $('#about-nav').removeClass('active')
 
-        clearInterval(chart_setInterval)
+        clearInterval(chartSetInterval)
     });
 
     //livereports
     $('#livereports-nav').click(function () {
-        checked_coins = JSON.parse(localStorage.getItem('checked_coins'));
+        checkedCoins = JSON.parse(localStorage.getItem('checkedCoins'));
 
-        if (checked_coins.length > 0) {
+        if (checkedCoins.length > 0) {
             $('#index-content').hide();
             $('#page-content').html('');
             // get the livereports-page content (from livereports_page.js)
-            $('#page-content').html(report_content());
+            $('#page-content').html(reportContent());
 
             $(this).addClass('active')
             $('#home-nav').removeClass('active')
             $('#about-nav').removeClass('active')
 
-            let coins_to_chart = ""
-            get_data_api(checked_coins, 0)
+            let coinsToChart = ""
+            getDataApi(checkedCoins, 0)
             google.charts.load('current', { 'packages': ['line'] });
 
         }
         else {
-            modal_error('No coins were selected', 'To view the <strong>Live Report</strong>, you must select at least one currency');
+            modalError('No coins were selected', 'To view the <strong>Live Report</strong>, you must select at least one currency');
         }
 
     });
@@ -68,7 +68,7 @@ $(document).ready(function () {
         $('#index-content').hide();
         $('#page-content').html('');
         // get the about-page content (from about_page.js)
-        $('#page-content').html(about_content());
+        $('#page-content').html(aboutContent());
 
         $(this).addClass('active')
         $('#home-nav').removeClass('active')
@@ -78,7 +78,7 @@ $(document).ready(function () {
 });
 
 /////////////////// get and append all coins ///////////////////
-function get_Coins(url) {
+function getCoins(url) {
     $('.load-coins').fadeIn('500');
     $('#result').html("");
 
@@ -92,50 +92,50 @@ function get_Coins(url) {
     })
         .done(function (data) {
             localStorage.setItem('allCoins', JSON.stringify(data));
-            let shown_coins = {
+            let shownCoins = {
                 from: 0,
                 to: 51
             }
-            localStorage.setItem('shown_coins', JSON.stringify(shown_coins));
-            let checked_coins = [];
-            localStorage.setItem('checked_coins', JSON.stringify(checked_coins));
-            draw_coins(data, 0, 51);
+            localStorage.setItem('shownCoins', JSON.stringify(shownCoins));
+            let checkedCoins = [];
+            localStorage.setItem('checkedCoins', JSON.stringify(checkedCoins));
+            drawCoins(data, 0, 51);
         });
 }
 
-function draw_coins(data, from, to) {
-    let coins_str = '';
+function drawCoins(data, from, to) {
+    let coinsStr = '';
     for (let i = from; i < to; i++) {
-        let checked_coins = JSON.parse(localStorage.getItem('checked_coins'));
-        let checked_coin = ''
-        if (checked_coins.find(x => x.id === data[i].id)) {
-            checked_coin = 'checked'
+        let checkedCoins = JSON.parse(localStorage.getItem('checkedCoins'));
+        let checkedCoin = ''
+        if (checkedCoins.find(x => x.id === data[i].id)) {
+            checkedCoin = 'checked'
         }
         let searchid = ""
-        coins_str += append_coin(data[i], checked_coin, searchid)
+        coinsStr += appendCoin(data[i], checkedCoin, searchid)
     }
-    coins_str += '<div class="row"><a id="load-more-coins" class="btn-outline-lg no-top mt-2 mb-5" href="#aaa"><i class="fas fa-chevron-down"></i>&nbsp;&nbsp;&nbsp;LOAD MORE COINS</a>';
+    coinsStr += '<div class="row"><a id="load-more-coins" class="btn-outline-lg no-top mt-2 mb-5" href="#aaa"><i class="fas fa-chevron-down"></i>&nbsp;&nbsp;&nbsp;LOAD MORE COINS</a>';
 
     setTimeout(function () {
         $('.load-coins').fadeOut('500');
-        $('#result').append(coins_str);
+        $('#result').append(coinsStr);
     }, 500);
 };
 
-function append_coin(coin, checked_coin, searchid) {
+function appendCoin(coin, checkedCoin, searchid) {
     return `
-    <div id="coin-card-${coin.symbol}" class="coin-card scale-up-center ${checked_coin} ${searchid}">
+    <div id="coin-card-${coin.symbol}" class="coin-card scale-up-center ${checkedCoin} ${searchid}">
         <div class="card m-3">
             <div class="card-header d-flex justify-content-between">
                 <div> ${coin.name}</div>
                 <div class="custom-control custom-switch">
-                    <input type="checkbox" class="switch-checkbox switch-checkbox-coin custom-control-input" ${checked_coin} coinid="${coin.id}" symbol="${coin.symbol}" name="${coin.name}" id="${coin.id}">
+                    <input type="checkbox" class="switch-checkbox switch-checkbox-coin custom-control-input" ${checkedCoin} coinid="${coin.id}" symbol="${coin.symbol}" name="${coin.name}" id="${coin.id}">
                     <label class="custom-control-label" for="${coin.id}"></label>
                 </div>
             </div>
             <div class="card-body">
                 <h4 class="card-title"> ${coin.symbol.toUpperCase()} </h4>
-                <button id="button-${coin.id}" class="btn btn-secondary" type="button" onclick="get_Coin('${coin.id}')" data-toggle="collapse" data-target="#collapse-${coin.id}" aria-expanded="false" aria-controls="collapse-${coin.id}">
+                <button id="button-${coin.id}" class="btn btn-secondary" type="button" onclick="getCoin('${coin.id}')" data-toggle="collapse" data-target="#collapse-${coin.id}" aria-expanded="false" aria-controls="collapse-${coin.id}">
                     More Info
                 </button>
             </div>
@@ -163,62 +163,62 @@ function append_coin(coin, checked_coin, searchid) {
 /////////////////// load more coins /////////////////// 
 $(document).on('click', '#load-more-coins', function () {
     $('#load-more-coins').html('<i class="fas fa-spinner"></i>&nbsp;&nbsp;&nbsp;LOAD...');
-    let localStorage_all_coins = JSON.parse(localStorage.getItem('allCoins'));
-    let shown_coins = JSON.parse(localStorage.getItem('shown_coins'));
-    let from = shown_coins.to;
+    let localStorageAllCoins = JSON.parse(localStorage.getItem('allCoins'));
+    let shownCoins = JSON.parse(localStorage.getItem('shownCoins'));
+    let from = shownCoins.to;
     let to = 0;
 
-    if (localStorage_all_coins.length > (from + 51)) {
+    if (localStorageAllCoins.length > (from + 51)) {
         to = from + 51;
     }
     else {
-        to = localStorage_all_coins.length;
+        to = localStorageAllCoins.length;
     }
 
-    if (from >= localStorage_all_coins.length) {
+    if (from >= localStorageAllCoins.length) {
         $('#load-more-coins').html('Hi, well done, No more coins')
     }
     else {
-        draw_coins(localStorage_all_coins, from, to);
+        drawCoins(localStorageAllCoins, from, to);
         setTimeout(function () {
             $('#load-more-coins').remove();
         }, 500);
     }
 
-    shown_coins = {
+    shownCoins = {
         from: from,
         to: to
     }
-    localStorage.setItem('shown_coins', JSON.stringify(shown_coins));
+    localStorage.setItem('shownCoins', JSON.stringify(shownCoins));
 });
 
 
 /////////////////// Get more info for coin /////////////////// 
-function get_Coin(id) {
+function getCoin(id) {
     if (localStorage.getItem(id) != null) {
         //saved in local
-        let localStorage_coin = JSON.parse(localStorage.getItem(id));
+        let localStorageCoin = JSON.parse(localStorage.getItem(id));
 
-        if ((Date.now() - localStorage_coin.time_open) < 120000) {
+        if ((Date.now() - localStorageCoin.timeOpen) < 120000) {
             //no 2 minutes passed
-            draw_coin(localStorage_coin.coin)
+            drawCoin(localStorageCoin.coin)
         }
         else {
             //Calling server that less than 2 minutes
-            get_Coin_from_api(id)
+            getCoinFromApi(id)
         }
     }
     else {
         //Calling server that - Is not reserved locall
-        get_Coin_from_api(id)
+        getCoinFromApi(id)
     }
 }
 
-function get_Coin_from_api(id) {
-    let load_moer_info_Id = '#load-moer-info-' + id;
-    $(load_moer_info_Id).show();
-    let moreinfo_Id = '#moreinfo-' + id;
-    $(moreinfo_Id).html('');
+function getCoinFromApi(id) {
+    let loadMoreInfoId = '#load-moer-info-' + id;
+    $(loadMoreInfoId).show();
+    let moreInfoId = '#moreinfo-' + id;
+    $(moreInfoId).html('');
 
     let url = `https://api.coingecko.com/api/v3/coins/${id}`
     $.ajax({
@@ -232,7 +232,7 @@ function get_Coin_from_api(id) {
         .done(function (data) {
             //set the open coin in local storage
             let coin = {
-                time_open: Date.now(),
+                timeOpen: Date.now(),
                 id: data.id,
                 name: data.name,
                 symbol: data.symbol,
@@ -244,17 +244,17 @@ function get_Coin_from_api(id) {
             }
             localStorage.setItem(data.id, JSON.stringify(coin));
 
-            draw_coin(data);
+            drawCoin(data);
         });
 }
 
-function draw_coin(data) {
-    let load_moer_info_Id = '#load-moer-info-' + data.id;
-    let moreinfo_Id = '#moreinfo-' + data.id;
-    $(moreinfo_Id).html('');
+function drawCoin(data) {
+    let loadMoreInfoId = '#load-moer-info-' + data.id;
+    let moreInfoId = '#moreinfo-' + data.id;
+    $(moreInfoId).html('');
 
-    let html_str = "";
-    html_str += `
+    let htmlStr = "";
+    htmlStr += `
     <div>
         <ul class="list-group list-group-flush">
             <li class="list-group-item">${data.market_data.current_price.usd} <i class="fas fa-dollar-sign"></i></li>
@@ -264,8 +264,8 @@ function draw_coin(data) {
         <img class="card-img" src= ${data.image.large} alt="Card image cap">
     </div>`
 
-    $(load_moer_info_Id).hide();
-    $(moreinfo_Id).append(html_str);
+    $(loadMoreInfoId).hide();
+    $(moreInfoId).append(htmlStr);
 
     let buttonId = '#button-' + data.id
     $(buttonId).attr("onclick", "LessInfo('" + data.id + "')");
@@ -275,7 +275,7 @@ function draw_coin(data) {
 function LessInfo(id) {
     setTimeout(function () {
         let buttonId = '#button-' + id
-        $(buttonId).attr("onclick", "get_Coin('" + id + "')");
+        $(buttonId).attr("onclick", "getCoin('" + id + "')");
         $(buttonId).html('more info');
     }, 100);
 }
@@ -284,71 +284,70 @@ function LessInfo(id) {
 
 /////////////////// checked coin ///////////////////
 $(document).on('change', '.switch-checkbox-coin', function () {
-    let checked_coins = [];
-    if (localStorage.getItem('checked_coins') != null) {
-        checked_coins = JSON.parse(localStorage.getItem('checked_coins'));
+    let checkedCoins = [];
+    if (localStorage.getItem('checkedCoins') != null) {
+        checkedCoins = JSON.parse(localStorage.getItem('checkedCoins'));
     }
 
     if (this.checked) {
-        if (checked_coins.length > 4) {
-            let new_checked_coin = {
+        if (checkedCoins.length > 4) {
+            let newCheckedCoin = {
                 name: $(this).attr('name'),
                 id: $(this).attr('id'),
                 symbol: $(this).attr('symbol'),
                 coinid: $(this).attr('coinid')
             }
-            modal_coins(checked_coins, new_checked_coin);
+            modalCoins(checkedCoins, newCheckedCoin);
             this.checked = false;
         }
         else {
-            let checked_coin = {
+            let checkedCoin = {
                 name: $(this).attr('name'),
                 id: $(this).attr('id'),
                 symbol: $(this).attr('symbol'),
                 coinid: $(this).attr('coinid')
             }
-            checked_coins.push(checked_coin);
-            localStorage.setItem('checked_coins', JSON.stringify(checked_coins));
+            checkedCoins.push(checkedCoin);
+            localStorage.setItem('checkedCoins', JSON.stringify(checkedCoins));
         }
     }
     else {
-        for (let i = 0; i < checked_coins.length; i++) {
-            if (checked_coins[i].id === $(this).attr('id')) {
-                checked_coins.splice(i, 1);
-                localStorage.setItem('checked_coins', JSON.stringify(checked_coins));
+        for (let i = 0; i < checkedCoins.length; i++) {
+            if (checkedCoins[i].id === $(this).attr('id')) {
+                checkedCoins.splice(i, 1);
+                localStorage.setItem('checkedCoins', JSON.stringify(checkedCoins));
             };
         };
     }
 });
 
 //modal if check more then 5 coins
-function modal_coins(checked_coins, new_checked_coin) {
-    checked_coins = JSON.parse(localStorage.getItem('checked_coins'));
-    let modal_str = `
+function modalCoins(checkedCoins, newCheckedCoin) {
+    checkedCoins = JSON.parse(localStorage.getItem('checkedCoins'));
+    let modalStr = `
     <div class="modal fade" id="modal-coins" tabindex="-1" role="dialog" aria-labelledby="modal-coins-Title" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content  bg-secondary border-dark">
        
         <div class="card-body text-center">
             <h5 class="card-title">Up to 5 coins can be selected</h5>
-            <p class="card-text">If you want to check the coin <strong class="text-primary">"${new_checked_coin.symbol}"</strong></br>You must uncheck one of the coins</p>
+            <p class="card-text">If you want to check the coin <strong class="text-primary">"${newCheckedCoin.symbol}"</strong></br>You must uncheck one of the coins</p>
         </div>
         <ul class="list-group m-2">`
 
 
-    for (let i = 0; i < checked_coins.length; i++) {
-        //לשנות לפור אחר
-        modal_str += `
+    for (let i = 0; i < checkedCoins.length; i++) {
+        modalStr += `
             <li class="list-group-item d-flex justify-content-between">
-               <div> ${checked_coins[i].symbol}</div>
+               <div> ${checkedCoins[i].symbol}</div>
                 <div class="custom-control custom-switch">
-                    <input type="checkbox" checked class="modal-coin-checkbox custom-control-input" coinid="${checked_coins[i].coinid}" symbol="${checked_coins[i].symbol}" name="${checked_coins[i].name}" id="modal-switch-${checked_coins[i].coinid}">
-                    <label class="custom-control-label" for="modal-switch-${checked_coins[i].coinid}"></label>
+                    <input type="checkbox" checked class="modal-coin-checkbox custom-control-input" coinid="${checkedCoins[i].coinid}" symbol="${checkedCoins[i].symbol}" name="${checkedCoins[i].name}" id="modal-switch-${checkedCoins[i].coinid}">
+                    <label class="custom-control-label" for="modal-switch-${checkedCoins[i].coinid}"></label>
                 </div>
             </li>`
     }
 
-    modal_str += `
+    modalStr += `
         </ul>
             <div class="modal-footer">
             <button type="button" id="Save-modal-changes" class="btn btn-primary">Done</button>
@@ -358,57 +357,57 @@ function modal_coins(checked_coins, new_checked_coin) {
         </div>
     </div>`
 
-    let modal_coins_changes = [];
+    let modalCoinsChanges = [];
 
     $(document).on('change', '.modal-coin-checkbox', function () {
         if (this.checked) {
-            for (let i = 0; i < modal_coins_changes.length; i++) {
-                if (modal_coins_changes[i].symbol === $(this).attr('symbol')) {
-                    modal_coins_changes.splice(i, 1);
+            for (let i = 0; i < modalCoinsChanges.length; i++) {
+                if (modalCoinsChanges[i].symbol === $(this).attr('symbol')) {
+                    modalCoinsChanges.splice(i, 1);
                 };
             };
 
 
         }
         else {
-            let modal_coin_checked = {
+            let modalCoinChecked = {
                 name: $(this).attr('name'),
                 id: $(this).attr('id'),
                 symbol: $(this).attr('symbol'),
                 coinid: $(this).attr('coinid')
             }
-            modal_coins_changes.push(modal_coin_checked);
+            modalCoinsChanges.push(modalCoinChecked);
         }
 
     });
 
     $(document).on('click', '#Save-modal-changes', function () {
-        if (modal_coins_changes.length == 0) {
-            alert(`If you want to check coin "${new_checked_coin.symbol}". You must uncheck one of the coins`)
+        if (modalCoinsChanges.length == 0) {
+            alert(`If you want to check coin "${newCheckedCoin.symbol}". You must uncheck one of the coins`)
         }
         else {
             $('#modal-coins').modal('toggle');
-            for (let i = 0; i < modal_coins_changes.length; i++) {
-                let switch_id = "#" + modal_coins_changes[i].coinid;
-                $(switch_id).prop("checked", false)
+            for (let i = 0; i < modalCoinsChanges.length; i++) {
+                let switchId = "#" + modalCoinsChanges[i].coinid;
+                $(switchId).prop("checked", false)
 
-                for (let x = 0; x < checked_coins.length; x++)
-                    if (checked_coins[x].symbol == modal_coins_changes[i].symbol) {
-                        checked_coins.splice(x, 1);
+                for (let x = 0; x < checkedCoins.length; x++)
+                    if (checkedCoins[x].symbol == modalCoinsChanges[i].symbol) {
+                        checkedCoins.splice(x, 1);
                     };
             };
 
-            let new_checked_coin_id = "#" + new_checked_coin.id;
-            $(new_checked_coin_id).prop("checked", true)
-            checked_coins.push(new_checked_coin);
-            localStorage.setItem('checked_coins', JSON.stringify(checked_coins));
+            let newCheckedCoinId = "#" + newCheckedCoin.id;
+            $(newCheckedCoinId).prop("checked", true)
+            checkedCoins.push(newCheckedCoin);
+            localStorage.setItem('checkedCoins', JSON.stringify(checkedCoins));
         }
 
     });
 
 
     $('#modal-coins').remove();
-    $('body').append(modal_str);
+    $('body').append(modalStr);
     $('#modal-coins').modal('show');
 }
 
@@ -426,24 +425,24 @@ function search() {
         let searchCoin = CoinsArray.find(x => x.symbol.toUpperCase() === searchvalue);
 
         if (!searchCoin) {
-            modal_error('not match any currency', 'Please note: search the currency symbol (BTC for BITCOIN) in capital letters');
+            modalError('not match any currency', 'Please note: search the currency symbol (BTC for BITCOIN) in capital letters');
             document.getElementById("search-coin").focus();
         }
         else {
-            coin_card_id = "#coin-card-" + searchCoin.symbol;
+            coinCardId = "#coin-card-" + searchCoin.symbol;
             $('.coin-card').hide();
             $('#load-more-coins').hide();
             if (document.getElementById("coin-card-" + searchCoin.symbol) === null) {
                 0
-                let checked_coin = ''
-                let checked_coins = JSON.parse(localStorage.getItem('checked_coins'));
-                if (checked_coins.find(x => x.id === searchCoin.id)) {
-                    checked_coin = 'checked';
+                let checkedCoin = ''
+                let checkedCoins = JSON.parse(localStorage.getItem('checkedCoins'));
+                if (checkedCoins.find(x => x.id === searchCoin.id)) {
+                    checkedCoin = 'checked';
                 }
-                $('#result').append(append_coin(searchCoin, checked_coin, 'from-search'));
+                $('#result').append(appendCoin(searchCoin, checkedCoin, 'from-search'));
             }
             else {
-                $(coin_card_id).show();
+                $(coinCardId).show();
             }
             $("#searchBtn").html('<i class="fas fa-times fa-stack-1x"></i>');
             $("#searchBtn").attr('class', 'btn-times');
@@ -475,17 +474,17 @@ $(document).on('click', '#searchBtn', function () {
 
 ////////////////////// filter selected coins //////////////////////
 $(document).on('change', '#selectedCoins', function () {
-    let checked_coins = JSON.parse(localStorage.getItem('checked_coins'));
-    if (checked_coins.length > 0) {
-        filter_selected_coins($(this).is(':checked'), checked_coins);
+    let checkedCoins = JSON.parse(localStorage.getItem('checkedCoins'));
+    if (checkedCoins.length > 0) {
+        filterSelectedCoins($(this).is(':checked'), checkedCoins);
     }
     else {
         $('#selectedCoins').prop('checked', false);
-        modal_error('No coins were selected', 'To view the <strong>Selected Coins</strong>, you must select at least one currency');
+        modalError('No coins were selected', 'To view the <strong>Selected Coins</strong>, you must select at least one currency');
     }
 });
 
-function filter_selected_coins(checked, checked_coins) {
+function filterSelectedCoins(checked, checkedCoins) {
     if (checked) {
         document.getElementById("search-coin").value = ""
         $("#searchBtn").html('<i class="fas fa-search fa-stack-1x"></i>');
@@ -493,17 +492,17 @@ function filter_selected_coins(checked, checked_coins) {
         search();
 
         $('.coin-card').hide();
-        for (let i = 0; i < checked_coins.length; i++) {
-            if (document.getElementById("coin-card-" + checked_coins[i].symbol) === null) {
-                let checked_coin = ''
-                if (checked_coins.find(x => x.id === checked_coins[i].id)) {
-                    checked_coin = 'checked';
+        for (let i = 0; i < checkedCoins.length; i++) {
+            if (document.getElementById("coin-card-" + checkedCoins[i].symbol) === null) {
+                let checkedCoin = ''
+                if (checkedCoins.find(x => x.id === checkedCoins[i].id)) {
+                    checkedCoin = 'checked';
                 }
-                $('#result').append(append_coin(checked_coins[i], checked_coin, 'from-search'));
+                $('#result').append(appendCoin(checkedCoins[i], checkedCoin, 'from-search'));
             }
             else {
-                coin_card_id = "#coin-card-" + checked_coins[i].symbol;
-                $(coin_card_id).show();
+                coinCardId = "#coin-card-" + checkedCoins[i].symbol;
+                $(coinCardId).show();
             }
         }
         $('#load-more-coins').hide();
@@ -517,14 +516,14 @@ function filter_selected_coins(checked, checked_coins) {
 
 ////////////////////// Uncheck all Coins //////////////////////
 $(document).on('click', '#uncheckCoins', function () {
-    let checked_coins = JSON.parse(localStorage.getItem('checked_coins'));
-    if (checked_coins.length > 0) {
-        for (let x = 0; x < checked_coins.length; x++) {
-            let current_coin_id = "#" + checked_coins[x].id;
-            $(current_coin_id).prop("checked", false)
+    let checkedCoins = JSON.parse(localStorage.getItem('checkedCoins'));
+    if (checkedCoins.length > 0) {
+        for (let x = 0; x < checkedCoins.length; x++) {
+            let currentCoinId = "#" + checkedCoins[x].id;
+            $(currentCoinId).prop("checked", false)
         };
-        checked_coins = [];
-        localStorage.setItem('checked_coins', JSON.stringify(checked_coins));
+        checkedCoins = [];
+        localStorage.setItem('checkedCoins', JSON.stringify(checkedCoins));
         if ($('#selectedCoins').is(':checked')) {
             $('.coin-card').show();
             $('.from-search').remove();
@@ -533,14 +532,14 @@ $(document).on('click', '#uncheckCoins', function () {
         };
     }
     else {
-        modal_error('No coins were selected', 'Hey, Uncheck is impossible, For something that you haven\'t yet checked :)');
+        modalError('No coins were selected', 'Hey, Uncheck is impossible, For something that you haven\'t yet checked :)');
     }
 });
 
 ////////////////////// alert modal //////////////////////
-function modal_error(title, msg) {
+function modalError(title, msg) {
     $('#modal-error').remove();
-    let modal_error_str = `
+    let modalErrorStr = `
     <div id="modal-error" class="modal fade">
         <div class="modal-dialog " role="document">
             <div class="modal-content border-primary">
@@ -557,6 +556,6 @@ function modal_error(title, msg) {
         </div>
     </div>
     `
-    $('body').append(modal_error_str);
+    $('body').append(modalErrorStr);
     $('#modal-error').modal('show');
 }

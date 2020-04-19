@@ -1,13 +1,13 @@
-function get_data_api(checked_coins_array, setInterval_counter) {
+function getDataApi(checkedCoinsArray, setIntervalCounter) {
     //$('.load-chart').fadeIn('500');
-    let coins_to_url = ''
-    for (let i = 0; i < checked_coins_array.length; i++) {
-        coins_to_url += checked_coins_array[i].symbol
-        if ((i + 1) < checked_coins_array.length) {
-            coins_to_url += ','
+    let coinsToUrl = ''
+    for (let i = 0; i < checkedCoinsArray.length; i++) {
+        coinsToUrl += checkedCoinsArray[i].symbol
+        if ((i + 1) < checkedCoinsArray.length) {
+            coinsToUrl += ','
         }
     }
-    let url = `https://min-api.cryptocompare.com/data/pricemulti?relaxedValidation=true&fsyms=${coins_to_url}&tsyms=USD`
+    let url = `https://min-api.cryptocompare.com/data/pricemulti?relaxedValidation=true&fsyms=${coinsToUrl}&tsyms=USD`
 
     $.ajax({
         method: 'GET',
@@ -18,57 +18,56 @@ function get_data_api(checked_coins_array, setInterval_counter) {
         }
     })
         .done(function (data) {
-            coins_to_chart = data;
-            if (coins_to_chart.Response === "Error") {
+            coinsToChart = data;
+            if (coinsToChart.Response === "Error") {
 
                 $('#livereports-nav').removeClass('active')
                 $('#home-nav').addClass('active')
                 $('#about-nav').removeClass('active')
 
-                clearInterval(chart_setInterval)
+                clearInterval(chartSetInterval)
                 alert("Sorry, the currency you selected does not exist in the api of the coins to display in the graph.");
                 $('#page-content').html('');
                 $('#index-content').show();
-                setInterval_counter = 1
+                setIntervalCounter = 1
 
             }
-            if (setInterval_counter == 0) {
+            if (setIntervalCounter == 0) {
                 google.charts.setOnLoadCallback(drawChart);
 
             }
-
         });
 }
 
 
 function addrow() {
-    get_data_api(checked_coins, 1)
+    getDataApi(checkedCoins, 1)
 
-    let date_now = new Date($.now());
-    var time_now = date_now.getMinutes() + ":" + date_now.getSeconds();
+    let dateNow = new Date($.now());
+    var timeNow = dateNow.getMinutes() + ":" + dateNow.getSeconds();
 
-    let row = [time_now];
-    for (let key in coins_to_chart) {
-        if (coins_to_chart.hasOwnProperty(key)) {
-            row.push(coins_to_chart[key]["USD"])
+    let row = [timeNow];
+    for (let key in coinsToChart) {
+        if (coinsToChart.hasOwnProperty(key)) {
+            row.push(coinsToChart[key]["USD"])
         }
     }
     return row;
 }
 
-let chart_setInterval;
+let chartSetInterval;
 function drawChart() {
     let data = ""
     let rows = []
     let counter = 0
 
-    create_data()
-    function create_data() {
+    createData()
+    function createData() {
         data = new google.visualization.DataTable();
         data.addColumn('string', 'Time');
-        for (let key in coins_to_chart) {
-            if (coins_to_chart.hasOwnProperty(key)) {
-                data.addColumn('number', key + ' - ' + coins_to_chart[key]["USD"]);
+        for (let key in coinsToChart) {
+            if (coinsToChart.hasOwnProperty(key)) {
+                data.addColumn('number', key + ' - ' + coinsToChart[key]["USD"]);
             }
         }
 
@@ -94,8 +93,8 @@ function drawChart() {
     chart.draw(data, google.charts.Line.convertOptions(options));
 
 
-    chart_setInterval = setInterval(function () {
-        create_data()
+    chartSetInterval = setInterval(function () {
+        createData()
         chart.draw(data, google.charts.Line.convertOptions(options));
         if (counter == 0) {
             $('.load-chart').html('');
