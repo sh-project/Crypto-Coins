@@ -781,7 +781,7 @@ input[type='checkbox'] {
 /*    04. Header     */
 /*********************/
 .header {
-	background: url('../images/header-background.jpg') right center no-repeat;
+	background: url('../images/header-background.jpg') right top no-repeat;
 	/* 	background-size: cover; */
 	background-attachment: fixed;
 	height: 40rem;
@@ -1873,7 +1873,11 @@ a:hover.back-to-top {
 	
 	.header {
 		background: url('../images/header-background.jpg') center center no-repeat;
+		background-attachment: fixed;
+				
 	}
+
+	
 	/* end of header */
 
 
