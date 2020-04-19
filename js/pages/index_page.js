@@ -1,5 +1,5 @@
-function index_content() {
-    let index_content = `
+function indexContent() {
+    let indexContent = `
     <!-- Header -->
     <header id="header" class="header">
         <div class="header-content">
@@ -77,5 +77,5 @@ function index_content() {
 
     </div><!-- end of coins wrapper -->
     `
-    return index_content
+    return indexContent
 }

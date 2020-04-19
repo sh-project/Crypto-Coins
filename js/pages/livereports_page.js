@@ -1,5 +1,5 @@
-function report_content() {
-    let report_content = `
+function reportContent() {
+    let reportContent = `
     <!-- Header -->
     <header id="header" class="ex-header">
         <div class="container">
@@ -35,5 +35,5 @@ function report_content() {
         </div> <!-- end of container -->
     </div> <!-- end of ex-basic -->
     `
-    return report_content
+    return reportContent
 }

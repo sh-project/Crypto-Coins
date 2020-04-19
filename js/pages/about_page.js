@@ -1,6 +1,6 @@
 //<div id="about"></div>
-function about_content() {
-    let about_content = `
+function aboutContent() {
+    let aboutContent = `
         <!-- Header -->
         <header id="header" class="ex-header">
             <div class="container">
@@ -143,5 +143,5 @@ function about_content() {
             </div> <!-- end of slider -->
         </div> <!-- end of ex-basic -->
     `
-    return about_content
+    return aboutContent
 }
