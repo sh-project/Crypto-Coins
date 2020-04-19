@@ -1,8 +1,8 @@
 # Crypto-Coins
 
-jQuery-AJAX API Project
-JavaScript Learning Summary Project - jQuery
-At John Bryce College in Haifa, with the teacher Gad Shor
+jQuery-AJAX API Project<br>
+JavaScript Learning Summary Project - jQuery<br>
+At John Bryce College in Haifa, with the teacher Gad Shor<br>
 03/2020
 
  <p class="text-left">The goal of the project is to display crypto coins that come in AJAX from api from api.coingecko.com<br>
@@ -23,17 +23,17 @@ Each time you enter the report page, the graph is updated again.</p>
 
 <p class="text-left">Load pages on a dynamic DOM site. Into the main page.</p>
 
-The following topics were practiced in the project:
-HTML and CSS:
-HTML5 (with New HTML5 tags)
-CSS3 media queries and advanced selectors
-Dynamic page layouts
-Bootstrap & flex
-JavaScript:
-Objects
-jQuery
-Single Page Application foundations
-Events
-Ajax (RESTful API)
-Documentation
-External APIs
+The following topics were practiced in the project:<br>
+HTML and CSS:<br>
+HTML5 (with New HTML5 tags)<br>
+CSS3 media queries and advanced selectors<br>
+Dynamic page layouts<br>
+Bootstrap & flex<br>
+JavaScript:<br>
+Objects<br>
+jQuery<br>
+Single Page Application foundations<br>
+Events<br>
+Ajax (RESTful API)<br>
+Documentation<br>
+External APIs<br>
