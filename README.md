@@ -23,6 +23,8 @@ Each time you enter the report page, the graph is updated again.</p>
 
 <p class="text-left">Load pages on a dynamic DOM site. Into the main page.</p>
 
+https://sh-project.github.io/Crypto-Coins/
+
 The following topics were practiced in the project:<br>
 HTML and CSS:<br>
 HTML5 (with New HTML5 tags)<br>
